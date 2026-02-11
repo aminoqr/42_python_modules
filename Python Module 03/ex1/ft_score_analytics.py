@@ -3,7 +3,7 @@
 import sys
 
 
-def score_analytics():
+def score_analytics() -> None:
     print("=== Player Score Analytics ===")
     ac = len(sys.argv)
     if ac == 1:
@@ -16,8 +16,11 @@ def score_analytics():
             score_list.append(int(sys.argv[i]))
         except ValueError:
             print(f"{sys.argv[i]} is not a valid score")
+    if len(score_list) == 0:
+        print("No valid score was given!")
+        return
     print(f"Scores processed: {score_list}")
-    print(f"Total platers: {len(score_list)}")
+    print(f"Total players: {len(score_list)}")
     print(f"Total score: {sum(score_list)}")
     print(f"Average score: {sum(score_list)/len(score_list):.1f}")
     print(f"High score: {max(score_list)}")
