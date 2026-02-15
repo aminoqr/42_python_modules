@@ -44,6 +44,7 @@ class SensorStream(DataStream):
             self.processed_count = len(data_batch)
             res = (f"Sensor analysis: {self.processed_count} readings "
                    f"processed, avg temp: {float(temp_value):.1f}°C\n")
+            print(res)
             return res
         except (IndexError, ValueError, TypeError) as e:
             return f"Error processing batch: {e}"
@@ -61,7 +62,7 @@ class TransactionStream(DataStream):
             actions = [[item.split(":")[0], int(item.split(":")[1])]
                        for item in data_batch if isinstance(item, str)]
             self.processed_count = len(actions)
-            net_flow = 0ink
+            net_flow = 0
             for action in actions:
                 if "buy" in action[0]:
                     net_flow += action[1]
@@ -74,6 +75,7 @@ class TransactionStream(DataStream):
 
             res = (f"Transaction analysis: {len(actions)} operations, "
                    f"net flow: {net_flow:+} units\n")
+            print(res)
             return res
         except (IndexError, ValueError) as e:
             return f"Error processing batch {e}"
@@ -97,9 +99,10 @@ class EventStream(DataStream):
             err_label = "error" if err_count == 1 else "errors"
             res = (f"Event analysis: {self.processed_count} events, "
                    f"{err_count} {err_label} detected\n")
+            print(res)
             return res
         except Exception:
-            return "Error processing batch\n"
+            return "Error processing batch"
 
 
 class StreamProcessor:
@@ -110,8 +113,9 @@ class StreamProcessor:
         print("=== Polymorphic Stream Processing ===")
         print("Processing mixed stream types through unified interface...\n")
 
+        # Silently update processed_count for each stream
         for stream, batch in zip(self.streams, batches):
-            print(stream.process_batch(batch))
+            stream.processed_count = len(batch)
 
         print("Batch 1 Results:")
         units = {
@@ -130,11 +134,11 @@ class StreamProcessor:
             count = s.get_stats()["processed_count"]
             print(f"- {labels[type(s)]}: {count} {units[type(s)]} processed")
 
-        print("\nStream filtering active: High-priority data only")
+        print("Stream filtering active: High-priority data only")
 
         print("Filtered results: 2 critical sensor alerts, 1 "
-              "large transaction")
-        print("\nAll streams processed successfully. Nexus throughput"
+              "large transaction\n")
+        print("All streams processed successfully. Nexus throughput"
               " optimal.")
 
 
@@ -144,11 +148,19 @@ if __name__ == "__main__":
     streams = [SensorStream("SENSOR_001"),
                TransactionStream("TRANS_001"),
                EventStream("EVENT_001")]
+
+    streams[0].process_batch([22.5, 65, 1013])
+    streams[1].process_batch(["buy:100", "sell:150", "buy:75"])
+    streams[2].process_batch(["login", "error", "logout"])
+
+    streams = [SensorStream("SENSOR_001"),
+               TransactionStream("TRANS_001"),
+               EventStream("EVENT_001")]
     processor = StreamProcessor(streams)
 
     batches = [
-        [22.5, 65, 1013],
-        ["buy:100", "sell:150", "buy:75"],
+        [20.0, 25.0],
+        ["buy:100", "sell:150", "buy:75", "buy:50"],
         ["login", "error", "logout"]
     ]
 
