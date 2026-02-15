@@ -117,8 +117,7 @@ if __name__ == "__main__":
     new_processors = [[1, 2, 3],
                       "Hello World!",
                       "INFO: System ready"]
-    i = 1
-    for processor, data in zip(instances, new_processors):
+    for i, (processor, data) in enumerate(zip(instances, new_processors), 1):
         res = processor.process(data)
         print(f"Result {i}: {res}")
     print("\nFoundation systems online. Nexus ready for advanced streams.")
