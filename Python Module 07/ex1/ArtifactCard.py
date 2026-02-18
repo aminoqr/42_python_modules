@@ -1,19 +1,22 @@
 from ex0.Card import Card
 
+
 class ArtifactCard(Card):
+    card_type = "Artifact"
+
     def __init__(self, name: str, cost: int, rarity: str,
-                 durability: int, effect_type: str) -> None:
+                 durability: int, effect: str) -> None:
         super().__init__(name, cost, rarity)
         self.durability = durability
-        self.effect_type = effect_type
+        self.effect = effect
 
-    def play(self, game_state: dict) -> dict:
+    def play(self, game_state: dict = {}) -> dict:
         return {
             "card_played": self.name,
             "mana_used": self.cost,
-            "effect": f"Permanent: {self.effect_type}"
+            "effect": f"Permanent: {self.effect}"
         }
-    
+
     def activate_ability(self) -> dict:
         if self.durability > 0:
             self.durability -= 1
@@ -24,5 +27,5 @@ class ArtifactCard(Card):
             "artifact": self.name,
             "ability_activated": success,
             "remaining_durability": self.durability,
-            "power_effect": self.effect_type
+            "power_effect": self.effect
         }
