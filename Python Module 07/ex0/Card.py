@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 
 
 class Card(ABC):
+    card_type: str
+
     def __init__(self, name: str, cost: int, rarity: str) -> None:
         self.name = name
         if not isinstance(cost, int) or cost < 0:
